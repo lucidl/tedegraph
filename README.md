@@ -4,5 +4,7 @@ There are various formats, how to present information (mindmaps, outlines, or te
 ![tdg2](https://user-images.githubusercontent.com/2452010/92156021-9e4a6680-ee28-11ea-9d17-06cb4b1443ca.png)
 
 Might be useful:
+
 https://stackoverflow.com/questions/4867197/failed-loading-english-pickle-with-nltk-data-load
+
 https://stackoverflow.com/questions/57128735/using-pyinstaller-with-nltk-results-in-error-cant-find-nltk-data
