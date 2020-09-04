@@ -12,13 +12,22 @@ https://stackoverflow.com/questions/57128735/using-pyinstaller-with-nltk-results
 Usage:
 1) click on the New button
 2) fill in the information
+
    url: url of the article we want to read
+   
    title: title of the article
+   
    word1: first word (substring) of the first sentence we want to read
+   
    word2: second word (substring) of the first sentence we want to read
+   
    word3: third word (substring) of the first sentence we want to read
+   
    word4: first word (substring) of the last sentence we want to read
+   
    word5: second word (substring) of the last sentence we want to read
+   
    word6: third word (substring) of the last sentence we want to read
+   
 3) click OK button
 
