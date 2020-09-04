@@ -117,7 +117,7 @@ class Window(QWidget):
         self.lineNumber = 0
         breaker = False
         for idy, articlePart in enumerate(self.articleParts):
-          f = open(articlePart, "r")
+          f = open(articlePart, "r", encoding='utf-8', errors='ignore')
           lines = f.readlines()
           f.close()
           for idx, line in enumerate(lines):
@@ -130,7 +130,7 @@ class Window(QWidget):
               break
 
         if self.articleParts:
-            f = open(self.articleParts[self.articlePart], "r")
+            f = open(self.articleParts[self.articlePart], "r", encoding='utf-8', errors='ignore')
             self.lines = f.readlines()
             f.close()
             #self.lineNumber = 0
@@ -177,7 +177,7 @@ class Window(QWidget):
             self.textLabel.setText(self.lines[self.lineNumber])
         elif self.articlePart < len(self.articleParts) - 1:
             self.articlePart = self.articlePart + 1
-            f = open(self.articleParts[self.articlePart])
+            f = open(self.articleParts[self.articlePart], encoding='utf-8', errors='ignore')
             self.lines = f.readlines()
             self.lineNumber = 0
             f.close()
@@ -193,7 +193,7 @@ class Window(QWidget):
             self.textLabel.setText(self.lines[self.lineNumber])
         elif self.articlePart > 0:
             self.articlePart = self.articlePart - 1
-            f = open(self.articleParts[self.articlePart])
+            f = open(self.articleParts[self.articlePart], encoding='utf-8', errors='ignore')
             self.lines = f.readlines()
             self.lineNumber = len(self.lines) - 1
             f.close()
