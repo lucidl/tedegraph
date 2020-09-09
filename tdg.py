@@ -12,6 +12,31 @@ import html2txt
 import re
 import copy
 
+class ScrollLabel(QScrollArea):
+ 
+    def __init__(self, *args, **kwargs):
+        QScrollArea.__init__(self, *args, **kwargs)
+ 
+        self.setWidgetResizable(True)
+ 
+        content = QWidget(self)
+        self.setWidget(content)
+ 
+        lay = QVBoxLayout(content)
+ 
+        self.label = QLabel(content)
+        self.label.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
+        self.label.setWordWrap(True)
+ 
+        lay.addWidget(self.label)
+ 
+    def setText(self, text):
+        self.label.setText(text)
+ 
+    def setPixmap(self, pixmap):
+       self.label.setPixmap(pixmap)
+
+
 class Dialog(QDialog):
 
     accepted = pyqtSignal(dict)
@@ -59,7 +84,8 @@ class Window(QWidget):
         super().__init__()
 
         # image
-        self.imgLabel = QLabel(self)
+        self.imgLabel = ScrollLabel(self)
+        self.imgLabel.setFrameShape(QFrame.NoFrame)
 
         # text
         self.textLabel = QLabel("", self)
