@@ -189,7 +189,6 @@ class Window(QWidget):
             self.imgView.load_image(self.articleParts[self.articlePart].replace(".txt", ""))
         else:
             self.textLabel.setText("")
-            self.imgLabel.clear()
             self.lines = []
             self.lineNumber = 0
         os.chdir(self.working_directory)
@@ -199,12 +198,7 @@ class Window(QWidget):
             os.makedirs("tdg_articles")
         self.working_directory = os.path.abspath("tdg_articles")
 
-        article_names = [ '', ]
-        article_names.extend([d for d in os.listdir("tdg_articles") \
-                if os.path.isdir(os.path.join("tdg_articles", d))])
-        self.comboArticles.clear()
-        self.comboArticles.addItems(article_names)
-        self.currentArticle = str(self.comboArticles.currentText())
+        self.refreshComboArticles()
         os.chdir(self.working_directory)
         self.textLabel.setText("HELLO")
 
@@ -215,6 +209,15 @@ class Window(QWidget):
         self.lineNumber = 0
         self.articlePart = 0
         self.articleParts = []
+
+    def refreshComboArticles(self):
+        article_names = [ '', ]
+        article_names.extend([d for d in os.listdir("tdg_articles") \
+                if os.path.isdir(os.path.join("tdg_articles", d))])
+        self.comboArticles.clear()
+        self.comboArticles.addItems(article_names)
+        self.currentArticle = str(self.comboArticles.currentText())
+
 
     def onNext(self):
         os.chdir(os.path.join(self.working_directory, self.currentArticle))
@@ -278,6 +281,8 @@ class Window(QWidget):
             if end_pattern.search(s):
                 break
         html2txt.saveArticle(url, title, sentences3)
+        os.chdir("..")
+        self.refreshComboArticles()
 
     def onZoomIn(self):
         self.imgView.zoomIn()
