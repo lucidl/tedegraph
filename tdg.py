@@ -106,6 +106,7 @@ class Window(QWidget):
         # text
         self.textLabel = QLabel("", self)
         self.textLabel.setWordWrap(True)
+        self.textLabel.setFont(QFont('Arial', 12))
 
         # article choice
         self.comboArticles = QComboBox(self)
