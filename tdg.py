@@ -12,6 +12,45 @@ import html2txt
 import re
 import copy
 
+class ImageViewer(QGraphicsView):
+    factor = 2.0
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setRenderHints(
+            QPainter.Antialiasing | QPainter.SmoothPixmapTransform
+        )
+        self.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
+        self.setBackgroundRole(QPalette.NoRole)
+
+        scene = QGraphicsScene()
+        self.setScene(scene)
+
+        self._pixmap_item = QGraphicsPixmapItem()
+        scene.addItem(self._pixmap_item)
+
+    def load_image(self, fileName):
+        pixmap = QPixmap(fileName)
+        if pixmap.isNull():
+            return False
+        self._pixmap_item.setPixmap(pixmap)
+        return True
+
+    def zoomIn(self):
+        self.zoom(self.factor)
+
+    def zoomOut(self):
+        self.zoom(1 / self.factor)
+
+    def zoom(self, f):
+        self.scale(f, f)
+
+    def resetZoom(self):
+        self.resetTransform()
+
+    def fitToWindow(self):
+        self.fitInView(self.sceneRect(), QtCore.Qt.KeepAspectRatio)
+
 class Dialog(QDialog):
 
     accepted = pyqtSignal(dict)
@@ -58,14 +97,9 @@ class Window(QWidget):
     def __init__(self):
         super().__init__()
 
-        # image
-        self.imgLabel = QLabel(self)
-        self.imgLabel.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
-
-        scroll = QScrollArea()
-        scroll.setWidget(self.imgLabel)
-        scroll.setWidgetResizable(True)
-        scroll.setFrameShape(QFrame.NoFrame)
+         # image
+        self.imgView = ImageViewer()
+        self.imgView.setFrameShape(QFrame.NoFrame)
 
         # text
         self.textLabel = QLabel("", self)
@@ -90,6 +124,12 @@ class Window(QWidget):
 
         self.newButton = QPushButton('New', self)
         self.newButton.clicked.connect(self.onNew)
+
+        self.zoomInButton = QPushButton('Zoom In', self)
+        self.zoomInButton.clicked.connect(self.onZoomIn)
+
+        self.zoomOutButton = QPushButton('Zoom Out', self)
+        self.zoomOutButton.clicked.connect(self.onZoomOut)
         
         self.buttonGroup = QGroupBox()
         vboxButtons = QVBoxLayout()
@@ -97,12 +137,14 @@ class Window(QWidget):
         vboxButtons.addWidget(self.comboArticles)
         vboxButtons.addWidget(self.nextButton)
         vboxButtons.addWidget(self.prevButton)
+        vboxButtons.addWidget(self.zoomInButton)
+        vboxButtons.addWidget(self.zoomOutButton)
         vboxButtons.addWidget(self.endButton)
         vboxButtons.addStretch()
         self.buttonGroup.setLayout(vboxButtons)
 
         self.hbox = QHBoxLayout()
-        self.hbox.addWidget(scroll)
+        self.hbox.addWidget(self.imgView)
         self.hbox.addWidget(self.textLabel)
         self.hbox.addWidget(self.buttonGroup)
 
@@ -139,14 +181,9 @@ class Window(QWidget):
             f = open(self.articleParts[self.articlePart], "r", encoding='utf-8', errors='ignore')
             self.lines = f.readlines()
             f.close()
-            #self.lineNumber = 0
 
             self.textLabel.setText(self.lines[self.lineNumber])
-            pixmap = QPixmap(self.articleParts[self.articlePart].replace(".txt", ""))
-            #pixmap = pixmap.scaled(self.width(), self.height(), Qt.KeepAspectRatio) # new
-            #pixmap = pixmap.scaledToWidth(1000)
-            #pixmap = pixmap.scaled(self.width(), self.height(), Qt.SmoothTransformation)
-            self.imgLabel.setPixmap(pixmap)
+            self.imgView.load_image(self.articleParts[self.articlePart].replace(".txt", ""))
         else:
             self.textLabel.setText("")
             self.imgLabel.clear()
@@ -169,7 +206,7 @@ class Window(QWidget):
         self.textLabel.setText("HELLO")
 
         pixmap = QPixmap("logo.png")
-        self.imgLabel.setPixmap(pixmap)
+        self.imgView.load_image("logo.png")
         
         self.lines = []
         self.lineNumber = 0
@@ -187,9 +224,7 @@ class Window(QWidget):
             self.lines = f.readlines()
             self.lineNumber = 0
             f.close()
-            pixmap = QPixmap(self.articleParts[self.articlePart].replace(".txt", ""))
-            self.imgLabel.setPixmap(pixmap)
-            #self.resize(pixmap.width(), pixmap.height())
+            self.imgView.load_image(self.articleParts[self.articlePart].replace(".txt", ""))
             self.textLabel.setText(self.lines[self.lineNumber])
 
     def onPrev(self):
@@ -203,8 +238,7 @@ class Window(QWidget):
             self.lines = f.readlines()
             self.lineNumber = len(self.lines) - 1
             f.close()
-            pixmap = QPixmap(self.articleParts[self.articlePart].replace(".txt", ""))
-            self.imgLabel.setPixmap(pixmap)
+            self.imgView.load_image(self.articleParts[self.articlePart].replace(".txt", ""))
             self.textLabel.setText(self.lines[self.lineNumber])
 
     def onNew(self):
@@ -241,6 +275,12 @@ class Window(QWidget):
             if end_pattern.search(s):
                 break
         html2txt.saveArticle(url, title, sentences3)
+
+    def onZoomIn(self):
+        self.imgView.zoomIn()
+
+    def onZoomOut(self):
+        self.imgView.zoomOut()
 
     def onEnd(self):
         sys.exit()
