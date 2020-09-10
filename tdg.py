@@ -13,7 +13,7 @@ import re
 import copy
 
 class ImageViewer(QGraphicsView):
-    factor = 2.0
+    factor = 1.5
 
     def __init__(self, parent=None):
         super().__init__(parent)
