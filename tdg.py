@@ -97,6 +97,8 @@ class Window(QWidget):
     def __init__(self):
         super().__init__()
 
+        self.setGeometry(300, 300, 1200, 600)
+
          # image
         self.imgView = ImageViewer()
         self.imgView.setFrameShape(QFrame.NoFrame)
