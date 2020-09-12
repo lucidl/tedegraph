@@ -133,6 +133,9 @@ class Window(QWidget):
 
         self.zoomOutButton = QPushButton('Zoom Out', self)
         self.zoomOutButton.clicked.connect(self.onZoomOut)
+
+        self.bookmarkButton = QPushButton('Bookmark', self)
+        self.bookmarkButton.clicked.connect(self.onCreateBookmark)
         
         self.buttonGroup = QGroupBox()
         vboxButtons = QVBoxLayout()
@@ -142,6 +145,7 @@ class Window(QWidget):
         vboxButtons.addWidget(self.prevButton)
         vboxButtons.addWidget(self.zoomInButton)
         vboxButtons.addWidget(self.zoomOutButton)
+        vboxButtons.addWidget(self.bookmarkButton)
         vboxButtons.addWidget(self.endButton)
         vboxButtons.addStretch()
         self.buttonGroup.setLayout(vboxButtons)
@@ -165,6 +169,7 @@ class Window(QWidget):
             self.articleParts.append(f)
         self.articleParts.sort()
         self.articlePart = 0
+        self.lines = []
         self.lineNumber = 0
         breaker = False
         for idy, articlePart in enumerate(self.articleParts):
@@ -283,12 +288,53 @@ class Window(QWidget):
         html2txt.saveArticle(url, title, sentences3)
         os.chdir("..")
         self.refreshComboArticles()
+        os.chdir(self.working_directory)
 
     def onZoomIn(self):
         self.imgView.zoomIn()
 
     def onZoomOut(self):
         self.imgView.zoomOut()
+
+    def onCreateBookmark(self):
+
+        if not self.currentArticle or self.lines[self.lineNumber] == "__BM__\n":
+            return
+        os.chdir(os.path.join(self.working_directory, self.currentArticle))
+
+        # removing old bookmark
+        for file in glob.glob("*.txt"):
+            f = open(file, "r", encoding='utf-8', errors='ignore')
+            lines = f.readlines()
+            f.close()
+            oldText = "".join(lines)
+            if "__BM__\n" in oldText:
+                with open(file, "w") as ff:
+                    newText = oldText.replace("__BM__\n", "")
+                    ff.write(newText)
+
+        # making new bookmark
+        f = open(self.articleParts[self.articlePart], "r", encoding='utf-8', errors='ignore')
+        self.lines = f.readlines()
+        f.close()
+
+        if self.lineNumber > 0:
+            self.lines.insert(self.lineNumber - 1, "__BM__\n")
+        else:
+            self.lines.insert(0, "__BM__\n")
+
+        f = open(self.articleParts[self.articlePart], "w")
+        newText = "".join(self.lines)
+        f.write(newText)
+        f.close()
+
+        self.lineNumber = self.lines.index("__BM__\n")
+        f = open(self.articleParts[self.articlePart], "r", encoding='utf-8', errors='ignore')
+        self.lines = f.readlines()
+        f.close()
+
+        os.chdir(self.working_directory)
+        QMessageBox.about(self, "", "Bookmark added successfully")
 
     def onEnd(self):
         sys.exit()
