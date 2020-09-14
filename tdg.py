@@ -217,8 +217,8 @@ class Window(QWidget):
 
     def refreshComboArticles(self):
         article_names = [ '', ]
-        article_names.extend([d for d in os.listdir("tdg_articles") \
-                if os.path.isdir(os.path.join("tdg_articles", d))])
+        article_names.extend(sorted([d for d in os.listdir("tdg_articles") \
+                if os.path.isdir(os.path.join("tdg_articles", d))]))
         self.comboArticles.clear()
         self.comboArticles.addItems(article_names)
         self.currentArticle = str(self.comboArticles.currentText())
