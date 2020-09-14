@@ -122,14 +122,17 @@ def saveArticle(url, title, sentences):
     if pattern.match(sentence):
       img_url = images_dict[sentence]
           
-      img_file_name = "%07d" % i
-      if url.startswith("https") and not img_url.startswith("https"):
-          urlretrieve("https:" + img_url, os.path.join(title, img_file_name))
-      elif url.startswith("http") and not img_url.startswith("http"):
-          urlretrieve("http:" + img_url, os.path.join(title, img_file_name))
-      else:
-          urlretrieve(img_url, os.path.join(title, img_file_name))
-      fileName = "%07d.txt" % i 
+      try:
+          img_file_name = "%07d" % i
+          if url.startswith("https") and not img_url.startswith("https"):
+              urlretrieve("https:" + img_url, os.path.join(title, img_file_name))
+          elif url.startswith("http") and not img_url.startswith("http"):
+              urlretrieve("http:" + img_url, os.path.join(title, img_file_name))
+          else:
+              urlretrieve(img_url, os.path.join(title, img_file_name))
+          fileName = "%07d.txt" % i 
+      except:
+          continue
       i = i + 1
       continue
 
