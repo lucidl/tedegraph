@@ -16,7 +16,7 @@ import codecs
 
 images_dict = {}
 
-def nodeToSentences(node):
+def node_to_sentences(node):
   # converts html node (tag) to list of sentences
 
   if node is None:
@@ -52,7 +52,7 @@ def nodeToSentences(node):
       buffer += " " + s
 
     # tokenize the content of the buffer and empty the buffer.
-    if s.endswith(".") or s_next is None or separateStrings(nav_s, s_next):
+    if s.endswith(".") or s_next is None or separate_strings(nav_s, s_next):
       # nav_s and s_next will be splitted
       tokenizer = nltk.data.load('nltk:tokenizers/punkt/english.pickle')
       buffer = buffer.replace("\n", " ")
@@ -64,7 +64,7 @@ def nodeToSentences(node):
 
   return tokenized_strings
 
-def separateStrings(s1, s2):
+def separate_strings(s1, s2):
   onlys1 = [x.name for x in s1.parents if not x in s2.parents] # uzly pouze nad s1
   onlys2 = [x.name for x in s2.parents if not x in s1.parents] # uzly pouze nad s2
   # list of tags, that will let s1 and s2 splitted
@@ -74,7 +74,7 @@ def separateStrings(s1, s2):
       return True
   return False
 
-def getSoupFromUrl(url):
+def get_soup_from_url(url):
   if url.startswith('http'):
     html = urlopen(url).read().decode('utf-8', 'ignore')
     soup = BeautifulSoup(html, features = "html.parser")
@@ -107,12 +107,12 @@ def getSoupFromUrl(url):
     return
   return soup
 
-def saveArticle(url, title, sentences):
+def save_article(url, title, sentences):
 
   if not os.path.exists(title):
       os.makedirs(title)
 
-  fileName = "0000000.txt"
+  file_name = "0000000.txt"
 
   i = 0  # number of file
 
@@ -130,11 +130,11 @@ def saveArticle(url, title, sentences):
               urlretrieve("http:" + img_url, os.path.join(title, img_file_name))
           else:
               urlretrieve(img_url, os.path.join(title, img_file_name))
-          fileName = "%07d.txt" % i 
+          file_name = "%07d.txt" % i 
       except:
           continue
       i = i + 1
       continue
 
-    with codecs.open(os.path.join(title, fileName), "a", encoding="utf-8") as f:
+    with codecs.open(os.path.join(title, file_name), "a", encoding="utf-8") as f:
       f.write(sentence + "\n")

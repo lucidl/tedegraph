@@ -36,19 +36,19 @@ class ImageViewer(QGraphicsView):
         self._pixmap_item.setPixmap(pixmap)
         return True
 
-    def zoomIn(self):
+    def zoom_in(self):
         self.zoom(self.factor)
 
-    def zoomOut(self):
+    def zoom_out(self):
         self.zoom(1 / self.factor)
 
     def zoom(self, f):
         self.scale(f, f)
 
-    def resetZoom(self):
+    def reset_zoom(self):
         self.resetTransform()
 
-    def fitToWindow(self):
+    def fit_to_window(self):
         self.fitInView(self.sceneRect(), QtCore.Qt.KeepAspectRatio)
 
 class Dialog(QDialog):
@@ -100,102 +100,102 @@ class Window(QWidget):
         self.setGeometry(300, 300, 1200, 600)
 
          # image
-        self.imgView = ImageViewer()
-        self.imgView.setFrameShape(QFrame.NoFrame)
+        self.img_view = ImageViewer()
+        self.img_view.setFrameShape(QFrame.NoFrame)
 
         # text
-        self.textLabel = QLabel("", self)
-        self.textLabel.setWordWrap(True)
-        self.textLabel.setFont(QFont('Arial', 12))
+        self.text_label = QLabel("", self)
+        self.text_label.setWordWrap(True)
+        self.text_label.setFont(QFont('Arial', 12))
 
         # article choice
-        self.comboArticles = QComboBox(self)
+        self.combo_articles = QComboBox(self)
         self.init()
-        self.comboArticles.currentTextChanged.connect(self.onArticleChange)
+        self.combo_articles.currentTextChanged.connect(self.on_article_change)
         
         # buttons
-        self.nextButton = QPushButton('Next', self)
-        self.nextButton.setShortcut("Space")
-        self.nextButton.clicked.connect(self.onNext)
+        self.next_button = QPushButton('Next', self)
+        self.next_button.setShortcut("Space")
+        self.next_button.clicked.connect(self.on_next)
 
-        self.prevButton = QPushButton('Prev', self)
-        self.prevButton.setShortcut("Backspace")
-        self.prevButton.clicked.connect(self.onPrev)
+        self.prev_button = QPushButton('Prev', self)
+        self.prev_button.setShortcut("Backspace")
+        self.prev_button.clicked.connect(self.on_prev)
 
-        self.endButton = QPushButton('End', self)
-        self.endButton.clicked.connect(self.onEnd)
+        self.end_button = QPushButton('End', self)
+        self.end_button.clicked.connect(self.on_end)
 
-        self.newButton = QPushButton('New', self)
-        self.newButton.clicked.connect(self.onNew)
+        self.new_button = QPushButton('New', self)
+        self.new_button.clicked.connect(self.on_new)
 
-        self.zoomInButton = QPushButton('Zoom In', self)
-        self.zoomInButton.clicked.connect(self.onZoomIn)
+        self.zoom_in_button = QPushButton('Zoom In', self)
+        self.zoom_in_button.clicked.connect(self.on_zoom_in)
 
-        self.zoomOutButton = QPushButton('Zoom Out', self)
-        self.zoomOutButton.clicked.connect(self.onZoomOut)
+        self.zoom_out_button = QPushButton('Zoom Out', self)
+        self.zoom_out_button.clicked.connect(self.on_zoom_out)
 
-        self.bookmarkButton = QPushButton('Bookmark', self)
-        self.bookmarkButton.clicked.connect(self.onCreateBookmark)
+        self.bookmark_button = QPushButton('Bookmark', self)
+        self.bookmark_button.clicked.connect(self.on_create_bookmark)
         
-        self.buttonGroup = QGroupBox()
-        vboxButtons = QVBoxLayout()
-        vboxButtons.addWidget(self.newButton)
-        vboxButtons.addWidget(self.comboArticles)
-        vboxButtons.addWidget(self.nextButton)
-        vboxButtons.addWidget(self.prevButton)
-        vboxButtons.addWidget(self.zoomInButton)
-        vboxButtons.addWidget(self.zoomOutButton)
-        vboxButtons.addWidget(self.bookmarkButton)
-        vboxButtons.addWidget(self.endButton)
-        vboxButtons.addStretch()
-        self.buttonGroup.setLayout(vboxButtons)
+        self.button_group = QGroupBox()
+        vbox_buttons = QVBoxLayout()
+        vbox_buttons.addWidget(self.new_button)
+        vbox_buttons.addWidget(self.combo_articles)
+        vbox_buttons.addWidget(self.next_button)
+        vbox_buttons.addWidget(self.prev_button)
+        vbox_buttons.addWidget(self.zoom_in_button)
+        vbox_buttons.addWidget(self.zoom_out_button)
+        vbox_buttons.addWidget(self.bookmark_button)
+        vbox_buttons.addWidget(self.end_button)
+        vbox_buttons.addStretch()
+        self.button_group.setLayout(vbox_buttons)
 
         self.hbox = QHBoxLayout()
-        self.hbox.addWidget(self.imgView)
-        self.hbox.addWidget(self.textLabel)
-        self.hbox.addWidget(self.buttonGroup)
+        self.hbox.addWidget(self.img_view)
+        self.hbox.addWidget(self.text_label)
+        self.hbox.addWidget(self.button_group)
 
         self.setWindowTitle('image <- text');
         self.setLayout(self.hbox)
 
         self.show()
 
-    def onArticleChange(self, value):
-        self.currentArticle = value
+    def on_article_change(self, value):
+        self.current_article = value
 
-        os.chdir(os.path.join(self.working_directory, self.currentArticle))
-        self.articleParts = []
+        os.chdir(os.path.join(self.working_directory, self.current_article))
+        self.article_parts = []
         for f in glob.glob("*.txt"):
-            self.articleParts.append(f)
-        self.articleParts.sort()
-        self.articlePart = 0
+            self.article_parts.append(f)
+        self.article_parts.sort()
+        self.article_part = 0
         self.lines = []
-        self.lineNumber = 0
+        self.line_number = 0
         breaker = False
-        for idy, articlePart in enumerate(self.articleParts):
-          f = open(articlePart, "r", encoding='utf-8', errors='ignore')
+        for idy, article_part in enumerate(self.article_parts):
+          f = open(article_part, "r", encoding='utf-8', errors='ignore')
           lines = f.readlines()
           f.close()
           for idx, line in enumerate(lines):
               if line == "__BM__\n": # found bookmark
-                  self.lineNumber = idx
-                  self.articlePart = idy
+                  self.line_number = idx
+                  self.article_part = idy
                   breaker = True
                   break
           if breaker:
               break
 
-        if self.articleParts:
-            f = open(self.articleParts[self.articlePart], "r", encoding='utf-8', errors='ignore')
+        if self.article_parts:
+            f = open(self.article_parts[self.article_part], "r", encoding='utf-8', errors='ignore')
             self.lines = f.readlines()
             f.close()
 
-            self.textLabel.setText(self.lines[self.lineNumber])
-            self.imgView.load_image(self.articleParts[self.articlePart].replace(".txt", ""))
+            self.text_label.setText(self.lines[self.line_number])
+            self.img_view.load_image(self.article_parts[self.article_part].replace(".txt", ""))
         else:
-            self.textLabel.setText("")
+            self.text_label.setText("")
             self.lines = []
-            self.lineNumber = 0
+            self.line_number = 0
         os.chdir(self.working_directory)
 
     def init(self):
@@ -203,62 +203,62 @@ class Window(QWidget):
             os.makedirs("tdg_articles")
         self.working_directory = os.path.abspath("tdg_articles")
 
-        self.refreshComboArticles()
+        self.refresh_combo_articles()
         os.chdir(self.working_directory)
-        self.textLabel.setText("HELLO")
+        self.text_label.setText("HELLO")
 
         pixmap = QPixmap("logo.png")
-        self.imgView.load_image("logo.png")
+        self.img_view.load_image("logo.png")
         
         self.lines = []
-        self.lineNumber = 0
-        self.articlePart = 0
-        self.articleParts = []
+        self.line_number = 0
+        self.article_part = 0
+        self.article_parts = []
 
-    def refreshComboArticles(self):
+    def refresh_combo_articles(self):
         article_names = [ '', ]
         article_names.extend(sorted([d for d in os.listdir("tdg_articles") \
                 if os.path.isdir(os.path.join("tdg_articles", d))]))
-        self.comboArticles.clear()
-        self.comboArticles.addItems(article_names)
-        self.currentArticle = str(self.comboArticles.currentText())
+        self.combo_articles.clear()
+        self.combo_articles.addItems(article_names)
+        self.current_article = str(self.combo_articles.currentText())
 
 
-    def onNext(self):
-        os.chdir(os.path.join(self.working_directory, self.currentArticle))
-        if self.lineNumber < len(self.lines) - 1:
-            self.lineNumber = self.lineNumber + 1
-            self.textLabel.setText(self.lines[self.lineNumber])
-        elif self.articlePart < len(self.articleParts) - 1:
-            self.articlePart = self.articlePart + 1
-            f = open(self.articleParts[self.articlePart], encoding='utf-8', errors='ignore')
+    def on_next(self):
+        os.chdir(os.path.join(self.working_directory, self.current_article))
+        if self.line_number < len(self.lines) - 1:
+            self.line_number = self.line_number + 1
+            self.text_label.setText(self.lines[self.line_number])
+        elif self.article_part < len(self.article_parts) - 1:
+            self.article_part = self.article_part + 1
+            f = open(self.article_parts[self.article_part], encoding='utf-8', errors='ignore')
             self.lines = f.readlines()
-            self.lineNumber = 0
+            self.line_number = 0
             f.close()
-            self.imgView.load_image(self.articleParts[self.articlePart].replace(".txt", ""))
-            self.textLabel.setText(self.lines[self.lineNumber])
+            self.img_view.load_image(self.article_parts[self.article_part].replace(".txt", ""))
+            self.text_label.setText(self.lines[self.line_number])
 
-    def onPrev(self):
-        os.chdir(os.path.join(self.working_directory, self.currentArticle))
-        if self.lineNumber > 0:
-            self.lineNumber = self.lineNumber - 1
-            self.textLabel.setText(self.lines[self.lineNumber])
-        elif self.articlePart > 0:
-            self.articlePart = self.articlePart - 1
-            f = open(self.articleParts[self.articlePart], encoding='utf-8', errors='ignore')
+    def on_prev(self):
+        os.chdir(os.path.join(self.working_directory, self.current_article))
+        if self.line_number > 0:
+            self.line_number = self.line_number - 1
+            self.text_label.setText(self.lines[self.line_number])
+        elif self.article_part > 0:
+            self.article_part = self.article_part - 1
+            f = open(self.article_parts[self.article_part], encoding='utf-8', errors='ignore')
             self.lines = f.readlines()
-            self.lineNumber = len(self.lines) - 1
+            self.line_number = len(self.lines) - 1
             f.close()
-            self.imgView.load_image(self.articleParts[self.articlePart].replace(".txt", ""))
-            self.textLabel.setText(self.lines[self.lineNumber])
+            self.img_view.load_image(self.article_parts[self.article_part].replace(".txt", ""))
+            self.text_label.setText(self.lines[self.line_number])
 
-    def onNew(self):
+    def on_new(self):
         # create a new article
         dg = Dialog()
-        dg.accepted.connect(self.createNewArticle)
+        dg.accepted.connect(self.create_new_article)
         dg.exec_()
 
-    def createNewArticle(self, values):
+    def create_new_article(self, values):
         url = values['Url']
         title = values['Title']
         word1 = values['Word1']
@@ -270,8 +270,8 @@ class Window(QWidget):
 
         os.chdir(self.working_directory)
 
-        soup = html2txt.getSoupFromUrl(url)
-        sentences = html2txt.nodeToSentences(soup.body)
+        soup = html2txt.get_soup_from_url(url)
+        sentences = html2txt.node_to_sentences(soup.body)
         start_pattern = re.compile('(.*?{}.*?{}.*?{}.*)'.format(word1, word2, word3))
         end_pattern = re.compile('(.*?{}.*?{}.*?{}.*)'.format(word4, word5, word6))
         sentences2 = copy.copy(sentences)
@@ -285,58 +285,58 @@ class Window(QWidget):
             sentences3.append(s)
             if end_pattern.search(s):
                 break
-        html2txt.saveArticle(url, title, sentences3)
+        html2txt.save_article(url, title, sentences3)
         os.chdir("..")
-        self.refreshComboArticles()
+        self.refresh_combo_articles()
         os.chdir(self.working_directory)
 
-    def onZoomIn(self):
-        self.imgView.zoomIn()
+    def on_zoom_in(self):
+        self.img_view.zoom_in()
 
-    def onZoomOut(self):
-        self.imgView.zoomOut()
+    def on_zoom_out(self):
+        self.img_view.zoom_out()
 
-    def onCreateBookmark(self):
+    def on_create_bookmark(self):
 
-        if not self.currentArticle or self.lines[self.lineNumber] == "__BM__\n":
+        if not self.current_article or self.lines[self.line_number] == "__BM__\n":
             return
-        os.chdir(os.path.join(self.working_directory, self.currentArticle))
+        os.chdir(os.path.join(self.working_directory, self.current_article))
 
         # removing old bookmark
         for file in glob.glob("*.txt"):
             f = open(file, "r", encoding='utf-8', errors='ignore')
             lines = f.readlines()
             f.close()
-            oldText = "".join(lines)
-            if "__BM__\n" in oldText:
+            old_text = "".join(lines)
+            if "__BM__\n" in old_text:
                 with open(file, "w") as ff:
-                    newText = oldText.replace("__BM__\n", "")
-                    ff.write(newText)
+                    new_text = old_text.replace("__BM__\n", "")
+                    ff.write(new_text)
 
         # making new bookmark
-        f = open(self.articleParts[self.articlePart], "r", encoding='utf-8', errors='ignore')
+        f = open(self.article_parts[self.article_part], "r", encoding='utf-8', errors='ignore')
         self.lines = f.readlines()
         f.close()
 
-        if self.lineNumber > 0:
-            self.lines.insert(self.lineNumber - 1, "__BM__\n")
+        if self.line_number > 0:
+            self.lines.insert(self.line_number - 1, "__BM__\n")
         else:
             self.lines.insert(0, "__BM__\n")
 
-        f = open(self.articleParts[self.articlePart], "w")
-        newText = "".join(self.lines)
-        f.write(newText)
+        f = open(self.article_parts[self.article_part], "w")
+        new_text = "".join(self.lines)
+        f.write(new_text)
         f.close()
 
-        self.lineNumber = self.lines.index("__BM__\n")
-        f = open(self.articleParts[self.articlePart], "r", encoding='utf-8', errors='ignore')
+        self.line_number = self.lines.index("__BM__\n")
+        f = open(self.article_parts[self.article_part], "r", encoding='utf-8', errors='ignore')
         self.lines = f.readlines()
         f.close()
 
         os.chdir(self.working_directory)
         QMessageBox.about(self, "", "Bookmark added successfully")
 
-    def onEnd(self):
+    def on_end(self):
         sys.exit()
 
 App = QApplication(sys.argv)
