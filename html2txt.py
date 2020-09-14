@@ -45,7 +45,7 @@ def nodeToSentences(node):
     except:
       s_next = None
 
-    # pridame string s do bufferu
+    # we add string s to the buffer
     if s.startswith(",") or s.startswith(".") or buffer == "":
       buffer += s
     else:
@@ -53,10 +53,10 @@ def nodeToSentences(node):
 
     # tokenize the content of the buffer and empty the buffer.
     if s.endswith(".") or s_next is None or separateStrings(nav_s, s_next):
-      # up: konec věty nebo konec textu nebo nav_s a s_next budou rozděleny
+      # nav_s and s_next will be splitted
       tokenizer = nltk.data.load('nltk:tokenizers/punkt/english.pickle')
       buffer = buffer.replace("\n", " ")
-      buffer = re.sub(" +", " ", buffer) # jednu nebo více mezer nahradíme jednou mezerou
+      buffer = re.sub(" +", " ", buffer) # one or more spaces replace with one space
       sentences = tokenizer.tokenize(buffer)
       for sen in sentences:
         tokenized_strings.append(sen)
@@ -65,11 +65,9 @@ def nodeToSentences(node):
   return tokenized_strings
 
 def separateStrings(s1, s2):
-  #common = list(set([x.name for x in s1.parents if x in s2.parents])) # spolecne uzly s1 a s2
   onlys1 = [x.name for x in s1.parents if not x in s2.parents] # uzly pouze nad s1
   onlys2 = [x.name for x in s2.parents if not x in s1.parents] # uzly pouze nad s2
-  # seznam tagu, ktere urcite nechaji s1 a s2 rozdelene, pokud jsou pouze nad jednim ci druhym stringem, je
-  # hned jasne, ze nema smysl spojovat s1 a s2 v jednu vetu
+  # list of tags, that will let s1 and s2 splitted
   separatingTags = [ "h1", "h2", "h3", "h4", "h5", "h6", "h7", "li", "ol", "ul", "table", "tr", "th", "td", "div", "p" ]
   for x in separatingTags:
     if x in onlys1 or x in onlys2:
@@ -98,7 +96,6 @@ def getSoupFromUrl(url):
     first_page = input("First page: ")
     last_page = input("Last page: ")
     output = check_output(["pdftotext", "-f", first_page, "-l", last_page, "-htmlmeta", "-nopgbrk", "-layout", url, "-"])
-    #output = check_output(["pdftotext", "-htmlmeta", "-nopgbrk", url, "-"])
     soup = BeautifulSoup(output)
   elif url.endswith(".txt"):
     text = open(url, 'r').readlines()
