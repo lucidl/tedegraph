@@ -1,14 +1,9 @@
-#!/usr/bin/env python
-# encoding: utf-8
-from urllib.request import urlopen, urlretrieve, urlparse, urlunparse
-from urllib.parse import urljoin
-import sys
+from urllib.request import urlopen, urlretrieve
 from bs4 import BeautifulSoup
 import bs4
 import nltk.util
 import re
 import nltk
-from nltk.tokenize import word_tokenize
 from ebooklib import epub
 from subprocess import check_output
 import os

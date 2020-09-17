@@ -1,8 +1,8 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QListWidget, QHBoxLayout, QVBoxLayout, QListWidgetItem, QPushButton, QLineEdit, QGroupBox, QAbstractItemView
+from PyQt5.QtWidgets import QApplication, QWidget, QHBoxLayout, QVBoxLayout, QPushButton, QLineEdit, QGroupBox
 from PyQt5.QtWidgets import QLabel, QComboBox
-from PyQt5.QtGui import QIcon, QPixmap
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QGraphicsScene, QFrame, QGraphicsView, QGraphicsPixmapItem, QDialog, QFormLayout, QMessageBox
+from PyQt5.QtGui import QPainter, QPalette, QFont, QPixmap
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt, pyqtSignal
 import sys
 import glob
@@ -207,7 +207,6 @@ class Window(QWidget):
         os.chdir(self.working_directory)
         self.text_label.setText("HELLO")
 
-        pixmap = QPixmap("logo.png")
         self.img_view.load_image("logo.png")
         
         self.lines = []
