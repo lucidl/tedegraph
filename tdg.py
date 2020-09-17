@@ -107,6 +107,7 @@ class Window(QWidget):
         self.text_label = QLabel("", self)
         self.text_label.setWordWrap(True)
         self.text_label.setFont(QFont('Arial', 12))
+        self.text_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
 
         # article choice
         self.combo_articles = QComboBox(self)
