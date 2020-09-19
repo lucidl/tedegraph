@@ -20,7 +20,7 @@ class ImageViewer(QGraphicsView):
         self.setRenderHints(
             QPainter.Antialiasing | QPainter.SmoothPixmapTransform
         )
-        self.setAlignment(Qt.AlignCenter | Qt.AlignCenter)
+        self.setAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         self.setBackgroundRole(QPalette.NoRole)
 
         scene = QGraphicsScene()
