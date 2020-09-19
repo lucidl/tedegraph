@@ -15,8 +15,7 @@ def node_to_sentences(node):
   # converts html node (tag) to list of sentences
 
   if node is None:
-    print ("node is None")
-    exit(0)
+    return []
 
   # remove uninteresting tags
   for t in node.find_all(["script", "noscript", "style"]):
@@ -60,8 +59,8 @@ def node_to_sentences(node):
   return tokenized_strings
 
 def separate_strings(s1, s2):
-  onlys1 = [x.name for x in s1.parents if not x in s2.parents] # uzly pouze nad s1
-  onlys2 = [x.name for x in s2.parents if not x in s1.parents] # uzly pouze nad s2
+  onlys1 = [x.name for x in s1.parents if not x in s2.parents] # nodes only over s1
+  onlys2 = [x.name for x in s2.parents if not x in s1.parents] # nodes only over s2
   # list of tags, that will let s1 and s2 splitted
   separatingTags = [ "h1", "h2", "h3", "h4", "h5", "h6", "h7", "li", "ol", "ul", "table", "tr", "th", "td", "div", "p" ]
   for x in separatingTags:
