@@ -62,7 +62,8 @@ def separate_strings(s1, s2):
   onlys1 = [x.name for x in s1.parents if not x in s2.parents] # nodes only over s1
   onlys2 = [x.name for x in s2.parents if not x in s1.parents] # nodes only over s2
   # list of tags, that will let s1 and s2 splitted
-  separatingTags = [ "h1", "h2", "h3", "h4", "h5", "h6", "h7", "li", "ol", "ul", "table", "tr", "th", "td", "div", "p" ]
+  separatingTags = [ "h1", "h2", "h3", "h4", "h5", "h6", "h7", "li", "ol", "ul", "table", "tr", "th", "td", "div", "p", \
+                     "dl", "dt", "dd"]
   for x in separatingTags:
     if x in onlys1 or x in onlys2:
       return True
