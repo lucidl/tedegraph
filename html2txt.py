@@ -22,8 +22,8 @@ def node_to_sentences(node):
     t.decompose() # t.extract() is similar method 
 
   for idx, img in enumerate(node.find_all("img")):
-      img.replaceWith("tdg_img_" + str(idx))
-      img_key = "tdg_img_{}".format(idx)
+      img_key = "tdg_img_%03d" % idx
+      img.replaceWith(img_key)
       images_dict[img_key] = img["src"]
 
   all_nav_strings = [x for x in node.find_all(text=True) if x.strip() != "" if not type(x) is bs4.Comment]
@@ -111,11 +111,12 @@ def save_article(url, title, sentences):
 
   i = 0  # number of file
 
-  pattern = re.compile("tdg_img_\d+")
+  pattern = re.compile("(tdg_img_\d{3})")
 
   for sentence in sentences:
-    if pattern.match(sentence):
-      img_url = images_dict[sentence]
+    match = pattern.match(sentence)
+    if match:
+      img_url = images_dict[match.group(1)]
           
       try:
           img_file_name = "%07d" % i
